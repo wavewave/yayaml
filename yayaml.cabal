@@ -1,0 +1,29 @@
+Name:		yayaml
+Version:	0.0.999
+Synopsis:       Yet Another YAML library
+Description: 	Yet Another YAML library for actual YAML parsing
+License: 	BSD3
+License-file:	LICENSE
+Author:		Ian-Woo Kim
+Maintainer: 	Ian-Woo Kim <ianwookim@gmail.com>
+Build-Type: 	Simple
+Cabal-Version:  >= 1.8
+data-files:     
+
+Library
+  hs-source-dirs: src
+  ghc-options: 	-Wall -Werror -funbox-strict-fields -fno-warn-unused-do-bind -fno-warn-orphans
+  ghc-prof-options: -caf-all -auto-all
+  Build-Depends: 
+                   attoparsec,
+                   base>4, 
+                   bytestring, 
+                   filepath,
+                   scientific, 
+                   text, 
+                   transformers
+
+  Exposed-Modules: 
+                   YAML.Builder
+                   YAML.Parser
+
