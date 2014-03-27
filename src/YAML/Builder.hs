@@ -58,13 +58,9 @@ buildYaml n (YIArray xs) = buildItemList n xs
 buildYaml _ (YPrim p) = buildPrim p 
 
 buildItemList :: Int -> [YamlValue] -> Builder
-buildItemList n lst@(_:_) = -- makeIndent n <> 
-                            newLine <> ((mconcat . intersperse newLine . map buildItem) lst)
-
-                             -- <> makeIndent n <> fromLazyText "- " 
-                             -- <> buildYaml (n+2) x <> newLine
+buildItemList n lst@(_:_) = newLine <> ((mconcat . intersperse newLine . map buildItem) lst)
   where buildItem y = 
-          makeIndent n <> fromLazyText "- " <> buildYaml (n+2) y --  <> newLine
+          makeIndent n <> fromLazyText "- " <> buildYaml (n+2) y
 buildItemList _ _ = mempty
 
 buildList :: ListStyle -> Int -> [YamlValue] -> Builder 
