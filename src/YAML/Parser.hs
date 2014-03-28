@@ -50,8 +50,10 @@ p_textNoComment delim =
         
 
 -- | convenient function for sepBy with indentation and comment
-p_sepBy1CommentAndIndent :: Int -> Parser a -> Parser [a]
-p_sepBy1CommentAndIndent n p = p `sepBy1` p_sep
+p_sepBy1CommentAndIndent :: Int 
+                         -> (Int -> Parser a) 
+                         -> Parser [a]
+p_sepBy1CommentAndIndent n p = (p n) `sepBy1` p_sep
   where spaces x = replicateM x (char ' ')
         p_sep = many1 p_emptyline >> spaces n
 
@@ -64,9 +66,12 @@ p_list p = char '['
            <* char ']'
 
 -- | list with flow with indentation and - 
-p_itemlist :: Int -> Parser a -> Parser [a]
+p_itemlist :: Int -> (Int -> Parser a) -> Parser [a]
 p_itemlist n p = p_sepBy1CommentAndIndent n line
-  where line = string "- " *> skipSpace *> p  
+  where line n' = do 
+          string "- " 
+          m <- p_indent 
+          p (n'+2+m)
 
 
 -- | literal block
@@ -130,11 +135,11 @@ p_emptyline = takeTill (/= ' ')>> p_linebreaker
 p_object :: Int -> Parser PYaml 
 p_object n = do 
     try (PYList <$> p_list (p_object n))
-    <|> try (PYList <$> p_itemlist n (p_object n))
+    <|> try (PYList <$> p_itemlist n p_object)
     <|> try (PYText <$> p_literalblock)
     <|> try (PYNumber <$> double)
     <|> try (PYText <$> p_doubleQuoteText)
-    <|> try (do kvlst <- p_sepBy1CommentAndIndent n content 
+    <|> try (do kvlst <- p_sepBy1CommentAndIndent n (const content)
                 return (PYObject kvlst))
     <|> PYText <$> (p_ptext [':','#','\n',',','[',']'])
   where 
