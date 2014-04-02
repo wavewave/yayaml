@@ -8,6 +8,7 @@ import Control.Monad (replicateM)
 import Data.Attoparsec.Combinator
 import Data.Attoparsec.Text
 import Data.Monoid
+import           Data.Scientific
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 --
@@ -17,7 +18,7 @@ import Prelude hiding (takeWhile,dropWhile)
 -- | parsed yaml 
 data PYaml = PYObject [ (T.Text, PYaml) ]
            | PYText T.Text
-           | PYNumber Double
+           | PYNumber Scientific -- Number
            | PYList [PYaml]
            deriving (Show, Eq)
 
@@ -86,9 +87,6 @@ p_literalblock = do
   where spaces x = replicateM x (char ' ')
         p_sep n = char '\n' >> spaces n
 
--- | number 
--- p_number :: Parser PYaml
--- p_number = PYNumber <$> double
 
 -- | indentation-aware key value pair parser
 p_keyvalue :: (Int -> Parser b) 
@@ -137,7 +135,7 @@ p_object n = do
     try (PYList <$> p_list (p_object n))
     <|> try (PYList <$> p_itemlist n p_object)
     <|> try (PYText <$> p_literalblock)
-    <|> try (PYNumber <$> double)
+    <|> try (PYNumber <$> rational)
     <|> try (PYText <$> p_doubleQuoteText)
     <|> try (do kvlst <- p_sepBy1CommentAndIndent n (const content)
                 return (PYObject kvlst))
