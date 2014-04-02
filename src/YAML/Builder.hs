@@ -48,6 +48,9 @@ instance S.IsString YamlValue where
 class MakeYaml a where
   makeYaml :: Int -> a -> YamlValue
 
+instance MakeYaml Bool where
+  makeYaml _ b = YPrim (YBool b)
+
 defIndent :: Int
 defIndent = 4 
 
