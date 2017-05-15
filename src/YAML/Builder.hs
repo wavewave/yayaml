@@ -10,6 +10,7 @@ import qualified Data.String as S (IsString(..), fromString)
 import qualified Data.Text.Lazy as T
 import qualified Data.Text as ST
 import           Data.Text.Lazy.Builder 
+import           Data.Text.Lazy.Builder.Scientific (scientificBuilder)
 
 data ListStyle = Inline | Wrapped 
 
