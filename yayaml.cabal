@@ -12,8 +12,8 @@ data-files:
 
 Library
   hs-source-dirs: src
-  ghc-options: 	-Wall -Werror -funbox-strict-fields -fno-warn-unused-do-bind -fno-warn-orphans
-  ghc-prof-options: -caf-all -auto-all
+  ghc-options: 	-Wall -funbox-strict-fields -fno-warn-unused-do-bind -fno-warn-orphans
+  ghc-prof-options: -fprof-cafs -fprof-auto
   Build-Depends: 
                    attoparsec,
                    base>4, 
